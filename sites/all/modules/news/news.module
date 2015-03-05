@@ -30,6 +30,15 @@ function news_form($form,&$form_submit) {
     '#type' => 'textfield',
     '#required' => TRUE,
   );
+  
+$form['gender'] = array(
+'#type' => 'radios',
+'#title' => t('Gender'),
+'#options' => array(
+t('Male'),
+t('Female'),
+)
+);
 
 $result = db_select('qulification','t_alias')->fields('t_alias',array('id','qulification'))->execute()->fetchAll();
 $options = array();

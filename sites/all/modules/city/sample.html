@@ -1,0 +1,82 @@
+<?php
+/**
+ * Implements hook_menu().
+ */
+function example_task_menu() {
+  $items = array();
+
+  $items['task/add'] = array(
+    'title' => 'Add task',
+    'page callback' => 'example_task_admin_add_page',
+    'access arguments' => array('administer example_task entities'),
+    'file' => 'example_task.admin.inc',
+    'type' => MENU_LOCAL_ACTION,
+    'tab_parent' => 'task',
+    'tab_root' => 'task',
+  );
+
+  $task_uri = 'task/%example_task';
+  $task_uri_argument_position = 1;
+
+  $items[$task_uri] = array(
+    'title callback' => 'entity_label',
+    'title arguments' => array('example_task', $task_uri_argument_position),
+    'page callback' => 'example_task_view',
+    'page arguments' => array($task_uri_argument_position),
+    'access callback' => 'entity_access',
+    'access arguments' => array('view', 'example_task', $task_uri_argument_position),
+    'file' => 'example_task.pages.inc',
+  );
+
+  $items[$task_uri . '/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items[$task_uri . '/delete'] = array(
+    'title' => 'Delete task',
+    'title callback' => 'example_task_label',
+    'title arguments' => array($task_uri_argument_position),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('example_task_delete_form', $task_uri_argument_position),
+    'access callback' => 'entity_access',
+    'access arguments' => array('edit', 'example_task', $task_uri_argument_position),
+    'file' => 'example_task.admin.inc',
+  );
+
+  $items[$task_uri . '/edit'] = array(
+    'title' => 'Edit',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('example_task_form', $task_uri_argument_position),
+    'access callback' => 'entity_access',
+    'access arguments' => array('edit', 'example_task', $task_uri_argument_position),
+    'file' => 'example_task.admin.inc',
+    'type' => MENU_LOCAL_TASK,
+    'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+  );
+
+  foreach (example_task_types() as $type => $info) {
+    $items['task/add/' . $type] = array(
+      'title' => 'Add task',
+      'page callback' => 'example_task_add',
+      'page arguments' => array(2),
+      'access callback' => 'entity_access',
+      'access arguments' => array('create', 'example_task', $type),
+      'file' => 'example_task.admin.inc',
+    );
+  }
+
+  $items['admin/structure/task-types/%example_task_type/delete'] = array(
+    'title' => 'Delete',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('example_task_type_form_delete_confirm', 4),
+    'access arguments' => array('administer example_task types'),
+    'weight' => 1,
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'example_task.admin.inc',
+  );
+
+  return $items;
+}
+?>
