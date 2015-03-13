@@ -1,0 +1,5 @@
+name = mymodule
+description =  Implementing mymodule module
+package = Pro Drupal Development
+core = 7.x
+files[]=mymodule.module

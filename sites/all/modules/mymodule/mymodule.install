@@ -1,0 +1,24 @@
+<?php
+function mymodule_schema()
+{
+  $schema['my_table'] = array
+  (
+    'description' => t('An example table'),
+    'fields' => array
+    (
+      'rid' => array
+      (
+        'description' => t('The unique Row ID'),
+        'type' => 'serial',
+      ),
+      'my_field' => array
+      (
+        'description' => t('A field to hold a value'),
+        'type' => 'text',
+      ),
+    ),
+    'primary key' => array('rid'),
+  );
+  return $schema;
+}
+?>
