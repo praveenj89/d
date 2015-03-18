@@ -9,7 +9,7 @@ function mymodule_menu()
   );
   $menu['mycontent'] = array
   (
-    'title' => 'View all items',
+    'title' => 'Friends List',
     'page callback' => 'mymodule_viewall_item_page',
     'access callback' => TRUE,
   );
@@ -127,7 +127,7 @@ function mymodule_viewall_item_page()
                        -> orderByHeader($header); // Add order by headers.
 					   
   $pager = $table_sort -> extend('PagerDefault')
-                       -> limit(10);  // here you can limit the number of data per page.
+                       -> limit(4);  // here you can limit the number of data per page.
 
   $result = $pager->execute();
   $rows = array();
@@ -135,6 +135,8 @@ function mymodule_viewall_item_page()
   foreach($result as $res) { 
  
   $edit = l(t('Edit'), 'mycontent/' .$res->rid. '/edit');  
+  $edit .= '|';  
+  $edit .= l(t('Delete'), 'mycontent/' .$res->rid. '/delete');  
     $rows[] = array($res->rid,$res->my_field, $edit,);
 	$a++;
    
@@ -195,7 +197,8 @@ function mymodule_item_delete_form_submit($form, &$form_state)
     ->condition('rid', $item->rid)
     ->execute();
   }
-  $form_state['redirect'] = '<front>';
+  //$form_state['redirect'] = '<front>';
+   $form_state['redirect'] = 'mycontent';
   drupal_set_message(t('The item has been deleted'));
 }
 ?>
