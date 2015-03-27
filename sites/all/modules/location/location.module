@@ -1,0 +1,52 @@
+<?php
+/**
+* Implements hook_block_info().
+*/
+function location_block_info() {
+  $blocks = array();
+  $blocks['location'] = array(
+    'info' => t('Location List'),
+  );
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function location_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'location':
+      $block['subject'] = '';
+      $block['content'] = location_CONTENT();
+      break;
+  }
+  return $block;
+}
+function location_CONTENT() {  
+		$query = db_select('taxonomy_term_data', 'u');
+		
+		$query->fields('u', array('tid','name','description')); 
+	//	$query->fields('l', array('field_logo_fid')); 
+	//	$query->fields('fm', array('filename')); 
+		//$query->innerJoin('file_managed', 'fm', 'l.field_logo_fid = fm.fid');  
+	//	$query->innerJoin('field_data_field_logo', 'l', 'l.entity_id = u.tid');  
+		$query->condition('vid', 4,'='); 
+
+		$result = $query->execute();
+
+		$location='';
+		
+		$location .='<div style="border-bottom:1px solid #ccc;padding-left: 15px;"><h1>Location List</h1></div>';
+		$location .='<ul>';
+		foreach($result as $res){
+		$name = $res->name;
+		//$field_logo_fid = $res->field_logo_fid;
+		$tid_link  = $GLOBALS['base_url']."/taxonomy/term/".$res->tid;
+		$location .='<li style="text-align:left;list-style:none;float: left;width: 150px;padding: 10px;">
+		<a href="'.$tid_link.'">'.$name.'</a></li>';
+		}
+		$location .='</ul>';
+		$location .='<div style="clear:both;"></div>';
+		return $location;
+}

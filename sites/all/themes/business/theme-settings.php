@@ -13,7 +13,7 @@ function business_form_system_theme_settings_alter(&$form, &$form_state) {
     '#type' => 'fieldset',
     '#title' => t('Business Theme Settings'),
     '#collapsible' => FALSE,
-    '#collapsed' => FALSE,
+    '#collapsed' => TRUE,
   );
   $form['busi_settings']['show_front_content'] = array(
     '#type' => 'checkbox',

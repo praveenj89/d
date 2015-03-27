@@ -1,0 +1,202 @@
+<?php
+function banner_menu()
+{
+		  $menu['admin/mybanner/add'] = array
+		  (
+			'title' => 'Add Banner',
+			'page callback' => 'banner_add_item_page',
+			'access callback' => TRUE,
+		  );
+		  $menu['admin/mybanner'] = array
+		  (
+			'title' => 'Banner',
+			'page callback' => 'banner_viewall_item_page',
+			'access callback' => TRUE,
+		  );   
+		   $menu['admin/mybanner/%mybanner/edit'] = array
+		  (
+			'title' => 'Edit',
+			'page callback' => 'drupal_get_form',
+			'page arguments' => array('banner_item_form', 2),
+			'access arguments' => array('edit banner items'),
+			'type' => MENU_LOCAL_TASK,
+			'weight' => -1,
+		  );
+		  $menu['admin/mybanner/%mybanner/delete'] = array
+			(
+				'title' => 'Delete',
+				'page callback' => 'drupal_get_form',
+				'page arguments' => array('banner_item_delete_form', 2),
+				'access arguments' => array('delete banner items'),
+				'type' => MENU_LOCAL_TASK,
+			);
+  return $menu;
+}
+
+function mybanner_load($banner_id)
+{
+  return db_query('SELECT banner_id, banner_name  FROM {banner} WHERE banner_id = :banner_id', array(':banner_id' => $banner_id))->fetchObject();
+}
+
+
+function banner_viewall_item_page()
+{
+	  $header = array(
+			array('data' => t('S.no'), 'field' => 'banner_id', 'sort' => 'ASC'),
+			array('data' => t('Banner Image')),
+			array('data' => t('Banner Name')),			
+			array('data' => t('OPERATIONS')),
+	  );
+
+  $query = db_select('banner', 'u');
+  $query->fields('u', array('banner_id','banner_name','image_example_image_fid')); 
+  $query->fields('fm', array('filename')); 
+  $query->leftJoin('file_managed', 'fm', 'u.image_example_image_fid = fm.fid');  
+  $table_sort = $query -> extend('TableSort') // Add table sort extender.
+                       -> orderByHeader($header); // Add order by headers.
+					   
+  $pager = $table_sort -> extend('PagerDefault')
+                       -> limit(5);  // here you can limit the number of data per page.
+
+  $result = $pager->execute();
+  $rows = array();
+  $a=1;  
+  foreach($result as $res) { 
+  $edit = l(t('Edit'), 'admin/mybanner/' .$res->banner_id. '/edit');  
+  $edit .= '|';  
+  $edit .= l(t('Delete'), 'admin/mybanner/' .$res->banner_id. '/delete');  
+  $img = $GLOBALS['base_url'].'/sites/default/files/banner_images/'.$res->filename;
+  $img = "<img src='".$img."' width='80px' height='70px'>";
+    $rows[] = array($res->banner_id,$img,$res->banner_name,$edit,);
+	$a++;
+   
+  }
+  $output = '';
+  if (!empty($rows)) {
+    $output = theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('banner_id' => 'sort-table')));
+    $output .= theme('pager');
+  }
+  else {
+    $output .= t("No results found.");
+  }
+  return $output;
+
+
+
+}
+
+
+
+function banner_add_item_page()
+{
+  $item = new StdClass;
+  $item->banner_id = FALSE;
+  $item->banner_name = '';
+
+  return drupal_get_form('banner_item_form', $item);
+}
+
+function banner_item_form($form, &$form_state, $item)
+{
+
+$form['#attributes']['enctype'] = 'multipart/form-data';
+  $form['#item'] = $item;
+  
+  $form['banner_name'] = array
+  (
+    '#title' => t('Enter a value'),
+    '#type' => 'textfield',
+    '#default_value' => $item->banner_name,
+  );
+  
+  $form['image_example_image_fid'] = array(
+	  '#title' => t('Image'),
+	  '#type' => 'managed_file',
+	  '#description' => t('The uploaded image will be displayed on this page using the image style choosen below.'),
+	  '#default_value' => variable_get('image_example_image_fid', ''),
+	  '#upload_location' => 'public://banner_images/',
+	);
+  $form['submit'] = array
+  (
+    '#type' => 'submit',
+    '#value' => t('Save'),
+  );
+  return $form;
+}
+
+function banner_item_form_submit($form, &$form_state)
+{
+ 
+  $item = $form['#item'];
+  if(isset($item->banner_id) && $item->banner_id)
+  {
+    db_update('banner')
+		->fields(array('banner_name' => $form_state['values']['banner_name'],'image_example_image_fid' => $form_state['values']['image_example_image_fid']))
+		->condition('banner_id', $item->banner_id)
+    ->execute();
+    
+    $form_state['redirect'] = 'admin/mybanner';
+  }
+  else
+  {
+    $banner_id = db_insert('banner')
+    ->fields(array('banner_name' => $form_state['values']['banner_name'],'image_example_image_fid' => $form_state['values']['image_example_image_fid']))
+    
+    ->execute();
+   
+     $form_state['redirect'] = 'admin/mybanner';
+  }
+}
+
+function banner_view_item_page($item)
+{
+  $page['banner_item_page'] = array
+  (
+    '#markup' => t('The value of the item is <em>@value</em>', array('@value' => $item->banner_name)),
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
+  );
+
+  return $page;
+} 
+
+
+function banner_item_delete_form($form, &$form_state, $item)
+{
+  $form['#item'] = $item;
+  // Note confirm_form() can be used here, but I prefer to use my own for styling purposes
+  $form['header'] = array
+  (
+    '#markup' => t('Are you sure you wish to delete the item with a field value of <em>@value</em>?', array('@value' => $item->banner_name)),
+    '#prefix' => '<h2>',
+    '#suffix' => '</h2>',
+  );
+  $form['warning'] = array
+  (
+    '#markup' => t('Warning, this action cannot be undone'),
+    '#prefix' => '<p>',
+    '#suffix' => '</p>',
+  );
+  $form['delete_button'] = array
+  (
+    '#type' => 'submit',
+    '#value' => t('Delete item'),
+  );
+  return $form;
+}
+
+function banner_item_delete_form_submit($form, &$form_state)
+{
+  if($form_state['values']['op'] == $form_state['values']['delete_button'])
+  {
+    $item = $form['#item'];
+    db_delete('banner')
+    ->condition('banner_id', $item->banner_id)
+    ->execute();
+  }
+   $form_state['redirect'] = 'admin/mybanner';
+  drupal_set_message(t('The item has been deleted'));
+}
+
+
+?>

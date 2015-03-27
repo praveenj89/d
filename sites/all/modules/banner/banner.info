@@ -1,0 +1,5 @@
+name = banner
+description =  Implementing banner module
+package = Pro Drupal Development
+core = 7.x
+files[]=banner.module

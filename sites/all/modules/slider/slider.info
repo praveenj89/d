@@ -1,0 +1,5 @@
+name = slider
+description =  Implementing slider module
+package = Pro Drupal Development
+core = 7.x
+files[]=slider.module

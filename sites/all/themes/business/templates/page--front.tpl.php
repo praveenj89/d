@@ -101,12 +101,15 @@
     $url1 = check_plain(theme_get_setting('slide1_url','business'));
     $url2 = check_plain(theme_get_setting('slide2_url','business'));
     $url3 = check_plain(theme_get_setting('slide3_url','business'));
-    ?>
-      <div id="slider">
+   ?>
+	 
+     <!-- <div id="slider">
         <div class="main_view">
             <div class="window">
                 <div class="image_reel">
-                    <a href="<?php print url($url1); ?>"><img src="<?php print base_path() . drupal_get_path('theme', 'business') . '/images/slide-image-1.jpg'; ?>"></a>
+                    <a href="<?php print url($url1); ?>"><img src="<?php print base_path() . drupal_get_path('theme', 'business') . '/images/slide-image-5.jpg'; ?>"></a>
+                    <a href="<?php print url($url1); ?>"><img src="<?php print base_path() . drupal_get_path('theme', 'business') . '/images/slide-image-4.jpg'; ?>"></a>
+                    <a href="<?php print url($url2); ?>"><img src="<?php print base_path() . drupal_get_path('theme', 'business') . '/images/slide-image-1.jpg'; ?>"></a>
                     <a href="<?php print url($url2); ?>"><img src="<?php print base_path() . drupal_get_path('theme', 'business') . '/images/slide-image-2.jpg'; ?>"></a>
                     <a href="<?php print url($url3); ?>"><img src="<?php print base_path() . drupal_get_path('theme', 'business') . '/images/slide-image-3.jpg'; ?>"></a>
                 </div>
@@ -121,9 +124,12 @@
                 <a rel="1" href="#">1</a>
                 <a rel="2" href="#">2</a>
                 <a rel="3" href="#">3</a>
+                <a rel="3" href="#">4</a>
+                <a rel="3" href="#">5</a>
             </div>
         </div>
-      </div><!-- EOF: #banner -->
+      </div> --><!-- EOF: #banner -->
+	 
 	<?php endif; ?>  
 
 
@@ -151,13 +157,8 @@
     <div id="main" class="clearfix">
       <section id="post-content" role="main">
         <?php if ($page['content_top']): ?><div id="content_top"><?php print render($page['content_top']); ?></div><?php endif; ?>
-        <?php print render($title_prefix); ?>
-        <?php if ($title): ?><h1 class="page-title"><?php print $title; ?></h1><?php endif; ?>
-        <?php print render($title_suffix); ?>
-        <?php if (!empty($tabs['#primary'])): ?><div class="tabs-wrapper clearfix"><?php print render($tabs); ?></div><?php endif; ?>
-        <?php print render($page['help']); ?>
-        <?php if ($action_links): ?><ul class="action-links"><?php print render($action_links); ?></ul><?php endif; ?>
-        <?php print render($page['content']); ?>
+         
+        <?php //print render($page['content']); ?>
       </section> <!-- /#main -->
 
       <?php if ($page['sidebar_first']): ?>

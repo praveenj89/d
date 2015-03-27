@@ -1,0 +1,67 @@
+<?php
+/**
+* Implements hook_block_info().
+*/
+function slider_block_info() {
+  $blocks = array();
+  $blocks['Home_banner'] = array(
+    'info' => t('Home Page Banner'),
+  );
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function slider_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'Home_banner':
+      $block['subject'] = '';
+      $block['content'] = Home_banner_CONTENT();
+      break;
+  }
+  return $block;
+}
+function Home_banner_CONTENT() {
+$base_url = $GLOBALS['base_url'];
+$p = "/sites/default/files/banner_images/";
+$query = db_select('banner', 'u');
+  $query->fields('u', array('banner_id','banner_name','image_example_image_fid')); 
+  $query->fields('fm', array('filename')); 
+  $query->leftJoin('file_managed', 'fm', 'u.image_example_image_fid = fm.fid');  
+ 
+  $result = $query->execute();
+  $result2 = $query->execute();
+   
+    $output='';
+		$output .='<div id="slider">'; 
+		$output .='<div class="main_view">';
+		  $output .='<div class="window">';
+					
+						$output .='<div class="image_reel">';
+						foreach($result as $res) 
+					{
+						$img = $base_url.$p.$res->filename;
+						$output .='<img src="'.$img.'">';
+					} 	
+					$output .='</div>';
+					 
+					$output .='<div class="descriptions">';
+						foreach($result2 as $res2) {
+						$output .='<div class="desc" style="display: none;">'.$res2->banner_name.'</div>';
+						}
+					$output .='</div>';
+		$output .='</div>
+						<div class="paging">';
+					 
+							$output .='<a rel="1" href="#">1</a>';
+							$output .='<a rel="2" href="#">2</a>';
+							$output .='<a rel="3" href="#">3</a>';
+				 
+						$output .='</div>'; 
+		
+	$output .='</div>'; 
+	$output .='</div>';
+  return $output;
+}

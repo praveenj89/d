@@ -1,0 +1,29 @@
+<?php
+function banner_schema()
+{
+  $schema['banner'] = array
+  (
+    'description' => t('An Home page banner module table'),
+    'fields' => array
+    (
+      'banner_id' => array
+      (
+        'description' => t('The unique Row ID'),
+        'type' => 'serial',
+      ),
+      'banner_name' => array
+      (
+        'description' => t('A field to hold a banner name'),
+        'type' => 'text',
+      ),
+	   'image_example_image_fid' => array
+      (
+        'description' => t('A field to hold a banner image id'),
+        'type' => 'text',
+      ),
+    ),
+    'primary key' => array('banner_id'),
+  );
+  return $schema;
+}
+?>

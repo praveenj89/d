@@ -1,0 +1,5 @@
+name = location
+description =  Location list
+package = Pro Drupal Development
+core = 7.x
+files[]=location.module

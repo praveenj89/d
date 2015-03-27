@@ -137,3 +137,19 @@ function business_preprocess_node(&$variables) {
 if (drupal_is_front_page()) {
   drupal_add_js(drupal_get_path('theme', 'business') . '/js/sliding_effect.js');
 }
+
+/*
+function business_theme() {
+  $items = array();
+  // create custom user-login.tpl.php
+  $items['user_login'] = array(
+  'render element' => 'form',
+  'path' => drupal_get_path('theme', 'business') . '/templates',
+  'template' => 'user-login',
+  'preprocess functions' => array(
+  'your_themename_preprocess_user_login'
+  ),
+ );
+return $items;
+}
+*/

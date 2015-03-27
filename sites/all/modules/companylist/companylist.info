@@ -1,0 +1,5 @@
+name = companylist
+description =  company list
+package = Pro Drupal Development
+core = 7.x
+files[]=companylist.module

@@ -1,0 +1,61 @@
+<?php
+/**
+* Implements hook_block_info().
+*/
+function companylist_block_info() {
+  $blocks = array();
+  $blocks['companylist'] = array(
+    'info' => t('Company List'),
+  );
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function companylist_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'companylist':
+      $block['subject'] = '';
+      $block['content'] = companylist_CONTENT();
+      break;
+  }
+  return $block;
+}
+function companylist_CONTENT() {  
+		
+		$query = db_select('taxonomy_term_data', 'u');		
+		$query->fields('u', array('tid','name','description')); 
+		$query->fields('fm', array('filename')); 
+		$query->leftJoin('field_data_field_logo', 'logo', 'logo.entity_id=u.tid');  
+		$query->leftJoin('file_managed', 'fm', 'fm.fid=logo.field_logo_fid');  
+
+		$query->condition('vid', 2,'='); 
+
+		$result = $query->execute();
+
+		$companylist='';
+		$companylist .='<div style="border-bottom:1px solid #ccc;padding-left: 15px;"><h1>Company List</h1></div>';
+		$companylist .='<ul>';
+		foreach($result as $res){
+		$name = $res->name;
+		$filename = $GLOBALS['base_url'].'/sites/default/files/'.$res->filename;
+		if(isset($res->filename) && !empty($res->filename))
+		{
+		$filename = $GLOBALS['base_url'].'/sites/default/files/'.$res->filename;
+		$img = '<img src="'.$filename.'" alt="'.$name.'" width="150px" height="100px">';
+		}else
+		{
+		//$filename = $GLOBALS['base_url'].'/sites/default/files/default_images/no-logo.jpg';
+		$img = '<img src="'.$filename.'" alt="'.$name.'" width="100px" height="100px">';
+		}
+		
+		$tid_link  = $GLOBALS['base_url']."/taxonomy/term/".$res->tid;
+		$companylist .='<li style="text-align:left;list-style:none;float: left;width: 150px;padding: 10px;">
+		<a href="'.$tid_link.'">'.$img.'</a></li>';
+		}
+		$companylist .='</ul>';
+		$companylist .='<div style="clear:both;"></div>';
+		return $companylist;
+}

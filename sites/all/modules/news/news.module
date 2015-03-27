@@ -69,7 +69,6 @@ foreach ($result as $value) {
 
 function news_form_submit($form, &$form_state) {
 
-
  $firstname     = $form_state['values']['firstname'];
  $lastname      = $form_state['values']['lastname'];
  $contact_no    = $form_state['values']['contact_no'];
